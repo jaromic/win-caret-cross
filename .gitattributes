@@ -1,0 +1,6 @@
+# Force LF line endings on checkout regardless of the cloning machine's
+# core.autocrlf setting. Without this, Git for Windows' common default
+# (autocrlf=true) rewrites shell scripts' shebang lines to "#!/bin/bash\r",
+# which breaks exec inside the Linux container with a confusing
+# "no such file or directory" error for a file that clearly exists.
+* text=auto eol=lf
