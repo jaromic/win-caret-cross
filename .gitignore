@@ -1,2 +1,6 @@
 /.claude/settings.local.json
 /project.env
+
+# .NET build output
+[Bb]in/
+[Oo]bj/

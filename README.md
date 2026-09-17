@@ -72,3 +72,10 @@ The container has no network credentials by default — `git push`/`fetch` insid
 - To mount an additional path (e.g. a second, unrelated repo) alongside `/workspace`, add another `-v host_path:/container_path` to the `docker run` line in `start-session.sh`.
 
 See `CLAUDE.md` for the spec-driven development workflow used on top of this scaffold.
+
+## This project
+
+The Windows tool itself lives in `src/CaretCrosshair/` — see
+`src/CaretCrosshair/README.md` for build instructions and known
+limitations, and `specs/win-caret-cross_spec.md` /
+`specs/stories/win-caret-cross.md` for the spec and story.
