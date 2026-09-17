@@ -79,3 +79,5 @@ The Windows tool itself lives in `src/CaretCrosshair/` — see
 `src/CaretCrosshair/README.md` for build instructions and known
 limitations, and `specs/win-caret-cross_spec.md` /
 `specs/stories/win-caret-cross.md` for the spec and story.
+An optional per-user installer built on top of the portable exe lives in
+`installer/` — see `installer/README.md`.

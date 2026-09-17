@@ -4,3 +4,6 @@
 # .NET build output
 [Bb]in/
 [Oo]bj/
+
+# Inno Setup installer output
+/installer/dist/

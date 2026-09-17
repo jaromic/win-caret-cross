@@ -19,7 +19,11 @@ In scope (MVP, matches `specs/win-caret-cross_spec.md`):
   caret-following.
 - Click-through, topmost, non-activating, DPI-aware overlay.
 - `Ctrl+Alt+X` global toggle; tray icon with Enable/Disable + Exit.
-- Portable self-contained win-x64 build, no installer.
+- Portable self-contained win-x64 build (primary deliverable, no
+  installation required — AC6).
+- An optional per-user Inno Setup installer (`installer/`) on top of the
+  portable exe, added post-MVP at user request — not a replacement for
+  the portable build.
 
 Out of scope for this pass: settings UI (color/thickness/hotkey
 customization), literal caret-blink-phase tracking, tracking a caret
@@ -54,6 +58,27 @@ bound.
 - Crosshair lines span only the monitor containing the point, not the
   full virtual desktop.
 
+## Fixes from first real-device run (2026-09-17)
+- Dropped the hand-written `app.manifest` — combined with
+  `PublishSingleFile` self-contained deployment, it caused "the
+  application was unable to start... side-by-side configuration is
+  incorrect" on real Windows. DPI awareness still works via
+  `ApplicationHighDpiMode` alone.
+- Crosshair now anchors to the caret's **bottom edge**, not its vertical
+  center (both `UiaCaretProvider` and `Win32CaretProvider`).
+- Line color changed from solid red to a white line with a black
+  outline. True inversion of on-screen content isn't achievable for an
+  overlay window (DWM composites each top-level window independently),
+  so the outline is the practical substitute for cross-background
+  legibility.
+- Crosshair now hides itself while Start Menu or Windows Search has
+  focus (`StartMenuExperienceHost`/`SearchHost`), since no public API
+  lets a normal window draw above that shell's z-order band.
+- User confirmed core behavior ("works") on their own Windows 11 machine
+  after these fixes — AC1-AC5 are informally confirmed there, though not
+  against the Test Plan's specific scripted checks below. AC6 (clean
+  machine, no install) and the new installer are still unverified.
+
 ## Acceptance Criteria
 (verbatim from the spec's Akzeptanzkriterien)
 1. Given Notepad has focus and a visible caret, when the user types or
@@ -82,9 +107,11 @@ bound.
   build` and `dotnet publish -c Release` for `win-x64` succeed with 0
   errors/warnings, confirmed in this container.
 
-All manual checks (AC1-AC6) are **not yet executed** — they require
-Windows hardware this session doesn't have. Flagging this explicitly
-rather than claiming they pass.
+Status: AC1-AC5 informally confirmed working by the user on their own
+Windows 11 machine after the post-first-run fixes above; not yet run
+against the scripted checks above one by one. AC6 (clean machine) and
+the installer's install/uninstall/startup-task flow (`installer/`) are
+still unverified — this session has no Windows hardware.
 
 ## Deploy & Monitoring
 Not a service deploy — a portable executable handed directly to the user.
