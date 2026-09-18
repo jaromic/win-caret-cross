@@ -109,9 +109,14 @@ bound.
 
 Status: AC1-AC5 informally confirmed working by the user on their own
 Windows 11 machine after the post-first-run fixes above; not yet run
-against the scripted checks above one by one. AC6 (clean machine) and
-the installer's install/uninstall/startup-task flow (`installer/`) are
-still unverified — this session has no Windows hardware.
+against the scripted checks above one by one. AC6 (clean machine) is
+still unverified.
+
+## Installer verification (2026-09-18)
+User confirmed the Inno Setup installer (`installer/CaretCrosshair.iss`)
+builds and works on their Windows machine. Not yet separately verified:
+a truly clean machine with no prior manual install, and the
+uninstall/re-install path.
 
 ## Deploy & Monitoring
 Not a service deploy — a portable executable handed directly to the user.
