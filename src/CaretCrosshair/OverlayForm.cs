@@ -23,6 +23,12 @@ internal enum CrosshairLineStyle
 
     /// <summary>3px line: 1px white core with a 1px black outline on each side.</summary>
     Outline,
+
+    /// <summary>1px line, alternating single black/white pixels along its length.</summary>
+    Dotted,
+
+    /// <summary>1px line, alternating single light-gray/dark-gray pixels -- subtler than Dotted, still readable everywhere.</summary>
+    DottedGray,
 }
 
 /// <summary>
@@ -33,6 +39,12 @@ internal sealed class OverlayForm : Form
 {
     private static readonly Color TransparentKey = Color.FromArgb(1, 1, 1);
     private const int DashLengthPx = 4;
+
+    // Symmetric-ish around mid-gray (128): far enough apart to stay
+    // distinguishable from each other and from most backgrounds, without
+    // the full black/white contrast of Dotted.
+    private static readonly Color LightGray = Color.FromArgb(214, 214, 214);
+    private static readonly Color DarkGray = Color.FromArgb(74, 74, 74);
 
     private Point? _crosshairPoint;
     private Rectangle _monitorBounds;
@@ -149,24 +161,37 @@ internal sealed class OverlayForm : Form
             case CrosshairLineStyle.Outline:
                 DrawOutline(e.Graphics, monitor, localX, localY);
                 break;
+            case CrosshairLineStyle.Dotted:
+                DrawAlternating(e.Graphics, monitor, localX, localY, 1, Color.Black, Color.White);
+                break;
+            case CrosshairLineStyle.DottedGray:
+                DrawAlternating(e.Graphics, monitor, localX, localY, 1, DarkGray, LightGray);
+                break;
         }
     }
 
     private static void DrawDashed(Graphics g, Rectangle monitor, int localX, int localY)
+        => DrawAlternating(g, monitor, localX, localY, DashLengthPx, Color.Black, Color.White);
+
+    /// <summary>
+    /// Two 1px pens sharing one dash pattern, phase-shifted by exactly one
+    /// dash length so colorA's "off" gaps are exactly where colorB's "on"
+    /// dashes land -- together they tile the line with no gaps/overlaps, at
+    /// a true 1px thickness. dashLength=1 alternates individual pixels
+    /// ("dotted"); larger values give longer dashes ("dashed").
+    /// </summary>
+    private static void DrawAlternating(
+        Graphics g, Rectangle monitor, int localX, int localY, int dashLength, Color colorA, Color colorB)
     {
-        // Two 1px pens sharing one dash pattern, phase-shifted by exactly one
-        // dash length so black's "off" gaps are exactly where white's "on"
-        // dashes land -- together they tile the line with no gaps/overlaps,
-        // at a true 1px thickness.
-        float[] pattern = { DashLengthPx, DashLengthPx };
+        float[] pattern = { dashLength, dashLength };
 
-        using var blackPen = new Pen(Color.Black, 1) { DashStyle = DashStyle.Custom, DashPattern = pattern };
-        using var whitePen = new Pen(Color.White, 1) { DashStyle = DashStyle.Custom, DashPattern = pattern, DashOffset = DashLengthPx };
+        using var penA = new Pen(colorA, 1) { DashStyle = DashStyle.Custom, DashPattern = pattern };
+        using var penB = new Pen(colorB, 1) { DashStyle = DashStyle.Custom, DashPattern = pattern, DashOffset = dashLength };
 
-        g.DrawLine(blackPen, monitor.Left, localY, monitor.Right, localY);
-        g.DrawLine(whitePen, monitor.Left, localY, monitor.Right, localY);
-        g.DrawLine(blackPen, localX, monitor.Top, localX, monitor.Bottom);
-        g.DrawLine(whitePen, localX, monitor.Top, localX, monitor.Bottom);
+        g.DrawLine(penA, monitor.Left, localY, monitor.Right, localY);
+        g.DrawLine(penB, monitor.Left, localY, monitor.Right, localY);
+        g.DrawLine(penA, localX, monitor.Top, localX, monitor.Bottom);
+        g.DrawLine(penB, localX, monitor.Top, localX, monitor.Bottom);
     }
 
     private static void DrawSolid(Graphics g, Rectangle monitor, int localX, int localY)

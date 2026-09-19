@@ -36,15 +36,23 @@ publishing.
   that window's top-left corner for ~300ms.
 - **Crosshair Style** (tray menu) switches the line rendering live:
   - *Dashed (1px)* — default. A single 1px line, alternating black/white
-    dashes along its length ("marching ants").
+    dashes (4px each) along its length ("marching ants").
+  - *Dotted (1px)* — same idea at the finest grain: alternates single
+    black/white pixels along the line.
+  - *Dotted Gray (1px)* — the same single-pixel alternation, but
+    light-gray/dark-gray instead of black/white. Subtler and less
+    eye-catching, still readable on any background.
   - *Solid (2px)* — one solid black 1px line directly next to one solid
     white 1px line.
   - *Outline (3px)* — 1px white core with a 1px black outline on each
     side.
-  All three combine black and white specifically because those are the
-  two luminance extremes: no single background color can make either
-  fully disappear (worst case, a mid-gray background, still gives
-  roughly even, moderate contrast against both).
+  The black/white styles use the two luminance extremes, so no single
+  background color can make the line fully disappear (worst case, a
+  mid-gray background, still gives roughly even, moderate contrast
+  against both). Dotted Gray trades some of that margin for subtlety —
+  its two grays are chosen to stay apart enough from each other and from
+  most backgrounds to remain recognizable, without full black/white
+  contrast.
 
 ## Known limitations
 

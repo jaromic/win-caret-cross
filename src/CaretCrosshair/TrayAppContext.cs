@@ -9,25 +9,32 @@ namespace CaretCrosshair;
 /// </summary>
 internal sealed class TrayAppContext : ApplicationContext
 {
+    private static readonly (CrosshairLineStyle Style, string Label)[] LineStyleOptions =
+    {
+        (CrosshairLineStyle.Dashed, "Dashed (1px)"),
+        (CrosshairLineStyle.Dotted, "Dotted (1px)"),
+        (CrosshairLineStyle.DottedGray, "Dotted Gray (1px)"),
+        (CrosshairLineStyle.Solid, "Solid (2px)"),
+        (CrosshairLineStyle.Outline, "Outline (3px)"),
+    };
+
     private readonly CrosshairEngine _engine = new();
     private readonly HotkeyWindow _hotkeyWindow = new();
     private readonly NotifyIcon _trayIcon;
     private readonly ToolStripMenuItem _enabledMenuItem;
-    private readonly ToolStripMenuItem _dashedStyleMenuItem;
-    private readonly ToolStripMenuItem _solidStyleMenuItem;
-    private readonly ToolStripMenuItem _outlineStyleMenuItem;
+    private readonly Dictionary<CrosshairLineStyle, ToolStripMenuItem> _lineStyleMenuItems = new();
 
     public TrayAppContext()
     {
         _enabledMenuItem = new ToolStripMenuItem("Enabled", null, OnToggleClicked) { Checked = true };
 
-        _dashedStyleMenuItem = new ToolStripMenuItem("Dashed (1px)", null, (_, _) => SetLineStyle(CrosshairLineStyle.Dashed));
-        _solidStyleMenuItem = new ToolStripMenuItem("Solid (2px)", null, (_, _) => SetLineStyle(CrosshairLineStyle.Solid));
-        _outlineStyleMenuItem = new ToolStripMenuItem("Outline (3px)", null, (_, _) => SetLineStyle(CrosshairLineStyle.Outline));
         var lineStyleMenu = new ToolStripMenuItem("Crosshair Style");
-        lineStyleMenu.DropDownItems.Add(_dashedStyleMenuItem);
-        lineStyleMenu.DropDownItems.Add(_solidStyleMenuItem);
-        lineStyleMenu.DropDownItems.Add(_outlineStyleMenuItem);
+        foreach (var (style, label) in LineStyleOptions)
+        {
+            var item = new ToolStripMenuItem(label, null, (_, _) => SetLineStyle(style));
+            _lineStyleMenuItems[style] = item;
+            lineStyleMenu.DropDownItems.Add(item);
+        }
 
         var exitMenuItem = new ToolStripMenuItem("Exit", null, OnExitClicked);
 
@@ -64,9 +71,10 @@ internal sealed class TrayAppContext : ApplicationContext
 
     private void UpdateLineStyleChecks()
     {
-        _dashedStyleMenuItem.Checked = _engine.LineStyle == CrosshairLineStyle.Dashed;
-        _solidStyleMenuItem.Checked = _engine.LineStyle == CrosshairLineStyle.Solid;
-        _outlineStyleMenuItem.Checked = _engine.LineStyle == CrosshairLineStyle.Outline;
+        foreach (var (style, item) in _lineStyleMenuItems)
+        {
+            item.Checked = _engine.LineStyle == style;
+        }
     }
 
     private void OnEngineEnabledChanged(bool enabled)
