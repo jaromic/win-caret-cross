@@ -44,6 +44,12 @@ internal sealed class CrosshairEngine : IDisposable
 
     public bool IsEnabled => _enabled;
 
+    public CrosshairLineStyle LineStyle
+    {
+        get => _overlay.Style;
+        set => _overlay.Style = value;
+    }
+
     public CrosshairEngine()
     {
         _pollTimer = new System.Windows.Forms.Timer { Interval = PollIntervalMs };

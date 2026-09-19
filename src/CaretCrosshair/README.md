@@ -28,12 +28,23 @@ publishing.
 ## Usage
 
 - Runs from the system tray (no visible window). Right-click the tray
-  icon for **Enabled** (checkable) and **Exit**.
+  icon for **Enabled** (checkable), **Crosshair Style**, and **Exit**.
 - `Ctrl+Alt+X` toggles the crosshair on/off globally.
 - The crosshair follows the caret automatically; it hides itself whenever
   no caret is reliably detected.
 - Pressing Alt, or switching the active window, snaps the crosshair to
   that window's top-left corner for ~300ms.
+- **Crosshair Style** (tray menu) switches the line rendering live:
+  - *Dashed (1px)* — default. A single 1px line, alternating black/white
+    dashes along its length ("marching ants").
+  - *Solid (2px)* — one solid black 1px line directly next to one solid
+    white 1px line.
+  - *Outline (3px)* — 1px white core with a 1px black outline on each
+    side.
+  All three combine black and white specifically because those are the
+  two luminance extremes: no single background color can make either
+  fully disappear (worst case, a mid-gray background, still gives
+  roughly even, moderate contrast against both).
 
 ## Known limitations
 
@@ -56,9 +67,9 @@ publishing.
 - **Line style:** true inversion of whatever is on-screen underneath the
   crosshair isn't achievable via an overlay window — DWM composites each
   top-level window independently, with no blend mode that reaches into
-  other windows' pixels. Instead the crosshair is drawn as a white line
-  with a black outline, which stays legible on both light and dark
-  backgrounds.
+  other windows' pixels. All three selectable styles (see Usage above)
+  use black+white instead, for the same cross-background-legibility
+  effect without needing inversion.
 - **Caret detection, in priority order:**
   1. UI Automation `TextPattern.GetSelection()` on the focused element: a
      zero-length selection *is* the caret position, so its bounding

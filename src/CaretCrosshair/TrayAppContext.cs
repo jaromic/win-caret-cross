@@ -13,16 +13,31 @@ internal sealed class TrayAppContext : ApplicationContext
     private readonly HotkeyWindow _hotkeyWindow = new();
     private readonly NotifyIcon _trayIcon;
     private readonly ToolStripMenuItem _enabledMenuItem;
+    private readonly ToolStripMenuItem _dashedStyleMenuItem;
+    private readonly ToolStripMenuItem _solidStyleMenuItem;
+    private readonly ToolStripMenuItem _outlineStyleMenuItem;
 
     public TrayAppContext()
     {
         _enabledMenuItem = new ToolStripMenuItem("Enabled", null, OnToggleClicked) { Checked = true };
+
+        _dashedStyleMenuItem = new ToolStripMenuItem("Dashed (1px)", null, (_, _) => SetLineStyle(CrosshairLineStyle.Dashed));
+        _solidStyleMenuItem = new ToolStripMenuItem("Solid (2px)", null, (_, _) => SetLineStyle(CrosshairLineStyle.Solid));
+        _outlineStyleMenuItem = new ToolStripMenuItem("Outline (3px)", null, (_, _) => SetLineStyle(CrosshairLineStyle.Outline));
+        var lineStyleMenu = new ToolStripMenuItem("Crosshair Style");
+        lineStyleMenu.DropDownItems.Add(_dashedStyleMenuItem);
+        lineStyleMenu.DropDownItems.Add(_solidStyleMenuItem);
+        lineStyleMenu.DropDownItems.Add(_outlineStyleMenuItem);
+
         var exitMenuItem = new ToolStripMenuItem("Exit", null, OnExitClicked);
 
         var contextMenu = new ContextMenuStrip();
         contextMenu.Items.Add(_enabledMenuItem);
+        contextMenu.Items.Add(lineStyleMenu);
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(exitMenuItem);
+
+        UpdateLineStyleChecks();
 
         _trayIcon = new NotifyIcon
         {
@@ -40,6 +55,19 @@ internal sealed class TrayAppContext : ApplicationContext
     }
 
     private void OnToggleClicked(object? sender, EventArgs e) => _engine.Toggle();
+
+    private void SetLineStyle(CrosshairLineStyle style)
+    {
+        _engine.LineStyle = style;
+        UpdateLineStyleChecks();
+    }
+
+    private void UpdateLineStyleChecks()
+    {
+        _dashedStyleMenuItem.Checked = _engine.LineStyle == CrosshairLineStyle.Dashed;
+        _solidStyleMenuItem.Checked = _engine.LineStyle == CrosshairLineStyle.Solid;
+        _outlineStyleMenuItem.Checked = _engine.LineStyle == CrosshairLineStyle.Outline;
+    }
 
     private void OnEngineEnabledChanged(bool enabled)
     {
