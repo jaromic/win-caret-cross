@@ -24,6 +24,11 @@ deliverable — this installer is an optional convenience on top of it.
 
 Requires [Inno Setup 6](https://jrsoftware.org/isinfo.php).
 
+Easiest: `scripts\build.ps1` from the repo root builds both the portable
+exe and this installer in one go — see `scripts/README.md`.
+
+Manually:
+
 ```
 cd src\CaretCrosshair
 dotnet publish -c Release
@@ -35,13 +40,6 @@ Output: `installer\dist\CaretCrosshairSetup.exe`.
 
 ## Known limitations
 
-- **Not yet compiled or run.** Inno Setup's compiler (`ISCC.exe`) is
-  Windows-only and unavailable in the Linux container this was authored
-  in, so the script has been reviewed but not built or exercised. First
-  compile, install, and uninstall pass needs to happen on real Windows —
-  in particular, verify: the app actually launches after "Launch now",
-  the startup task correctly starts it at next sign-in, and uninstalling
-  while the tray icon is running doesn't leave anything behind.
 - Not code-signed. Windows SmartScreen will likely warn on first run of
   an unsigned installer/exe from an unrecognized publisher; that's
   expected for a small unsigned tool.

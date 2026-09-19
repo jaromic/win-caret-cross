@@ -80,4 +80,5 @@ The Windows tool itself lives in `src/CaretCrosshair/` — see
 limitations, and `specs/win-caret-cross_spec.md` /
 `specs/stories/win-caret-cross.md` for the spec and story.
 An optional per-user installer built on top of the portable exe lives in
-`installer/` — see `installer/README.md`.
+`installer/` — see `installer/README.md`. `scripts/build.ps1` builds both
+in one go (Windows only).
